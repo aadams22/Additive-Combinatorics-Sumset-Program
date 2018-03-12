@@ -1,12 +1,14 @@
 #include <iostream>
 
-void getUserValues(int& n, int& d);
+void getUserValues(int& n, int& d, int& h);
 
 void allSubsets(int runs, int s, int d, int n, int **allCombos, int total);
 
-int totalCombinations(int& k, int& n); // ( n choose k )
+int totalCombinations(int& n, int& k); // ( n choose k )
 
 void printCombos(int **allCombos, int total, int d);
+
+void hFoldSumsets(int h, int d, int n, int **allCombos, int **allHFold, int total, int hFoldTotal);
 
 
 int main(void) {
@@ -14,9 +16,9 @@ int main(void) {
     int d = 0;
     int h = 0;
 
-    getUserValues(n,d); //gets user values for calculations
+    getUserValues(n,d,h); //gets user values for calculations
 
-    int total = totalCombinations(d,n); // ( n choose k ) returns the total number of possible unique combinations
+    int total = totalCombinations(n,d); // ( n choose k ) returns the total number of possible unique combinations
 
     //INITIALIZE ARRAY TO HOLD ALL UNIQUE COMBINATIONS OF Z_n: 2d: nxd 
     int** allCombos = new int*[total];
@@ -24,12 +26,15 @@ int main(void) {
         allCombos[i] = new int[d];
     }
 
-    allSubsets(0, 0, d, n, allCombos, total); // finds all unique subsets of Z_n and saves them to allCombo array
+    //allSubsets(0, 0, d, n, allCombos, total); // finds all unique subsets of Z_n and saves them to allCombo array
+	int r = (2*d)+h-1; //to include repetitions (( r choose k )) <=> ( r+k-1 choose k )
+	int hFoldTotal = totalCombinations(r,h);
+//	hFoldSumsets(h,d,n,allCombos,allHFold,total,hFoldTotal);
 
     return 0;
 }
 
-void getUserValues(int& n, int& d) {
+void getUserValues(int& n, int& d, int& h) {
     using namespace std;
 	
     cout << "Enter n (Z_n): ";
@@ -37,33 +42,40 @@ void getUserValues(int& n, int& d) {
 
     cout << "Enter d (coset size): ";
     cin >> d;
-
+	
+	cout << "Enter h (h-fold sumset): ";
+	cin >> h;	
     return;
 }
 
 
-int totalCombinations(int& k, int& n) {
-    int	_n = (2 * n) - 1 ; //to include the inverses of the integers
+int totalCombinations(int& n, int& k) {
+   // int	_n = (2 * n) - 1 ; //to include the inverses of the integers
     int	total = 1;
 
-    if(k > _n) {
+	std::cout << std::endl;
+	std::cout << "n: " << n << std::endl;
+	std::cout << "k: " << k << std::endl;
+
+    if(k > n) {
         return 0;
     }
 
-    for(int i=2; i<=k; i++) {
-        total *= (_n+i-1);
-        total /= i;
+	int a = 1;
+
+    for(int i=1; i<=k; i++) {
+        total *= (n+1-i);
+		total /= i;
     }
 
-        std::cout << total << std::endl;
-
-        return total;
+	std::cout << "total combs: " << total;
+	return total;
 }
 
 
 void allSubsets(int runs, int s, int d, int n, int **allCombos, int total){
 
-    bool midLoopNotComplete = true; //
+    bool midLoopNotComplete = true; //triggered when the iteraitons through the midloop are complete
 
 	if (total == 0) { //base case when total number of combinations have been found, function returns
 		return;
@@ -76,13 +88,15 @@ void allSubsets(int runs, int s, int d, int n, int **allCombos, int total){
 
         for(int i=0; i<d; i++){	
 
-            allCombos[total][i] = runs;
+            allCombos[total][i] = runs; // LINE 1 
 
-            if (i >= 1 && i < d-1) {
+		    if (i >= 1 && i < d-1) { // ALL LINES in range [2,d-1]
                 allCombos[total][i] = i+s;
             }
 
-            if (i == d-1) {
+            if (i == d-1) { // LAST LINE
+
+				//removes all possible duplicates. ex: { 1 2 2 } will not be printed
                 while (count <= allCombos[total][i-1]) {
                     count++;
                 }
@@ -126,6 +140,20 @@ void printCombos(int **allCombos, int total, int d) {
 }
 
 
+void hFoldSumsets(int h, int d, int n, int **allCombos, int **allHFold, int total, int hFoldTotal) {
+
+	if(total == 0) {
+		return;
+	}
+	
+	//for(int i=0; i<hFoldTotal; i++) {
+	//	allHFold[i] = allCombos[total][i] + allCombos[total][i+e]; 
+	 //}
+
+
+	//hFoldSumsets(h,d,n,allCombos,allHFold,total--,hFoldTotal);
+
+}
 
 
 
