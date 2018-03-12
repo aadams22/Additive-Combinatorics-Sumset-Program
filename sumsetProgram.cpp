@@ -1,10 +1,11 @@
 #include <iostream>
+#include <math.h>
 
 void getUserValues(int& n, int& d, int& h);
 
 void allSubsets(int runs, int s, int d, int n, int **allCombos, int total);
 
-int totalCombinations(int& n, int& k); // ( n choose k )
+int totalCombinations(int n, int k); // ( n choose k )
 
 void printCombos(int **allCombos, int total, int d);
 
@@ -26,9 +27,11 @@ int main(void) {
         allCombos[i] = new int[d];
     }
 
-    //allSubsets(0, 0, d, n, allCombos, total); // finds all unique subsets of Z_n and saves them to allCombo array
-	int r = (2*d)+h-1; //to include repetitions (( r choose k )) <=> ( r+k-1 choose k )
-	int hFoldTotal = totalCombinations(r,h);
+    allSubsets(0, 0, d, n, allCombos, total); // finds all unique subsets of Z_n and saves them to allCombo array
+
+	//int r = 2*d; //to include repetitions (( r choose k )) 
+	int hFoldTotal = pow(d,h);
+	std::cout << hFoldTotal;
 //	hFoldSumsets(h,d,n,allCombos,allHFold,total,hFoldTotal);
 
     return 0;
@@ -49,27 +52,22 @@ void getUserValues(int& n, int& d, int& h) {
 }
 
 
-int totalCombinations(int& n, int& k) {
-   // int	_n = (2 * n) - 1 ; //to include the inverses of the integers
-    int	total = 1;
-
-	std::cout << std::endl;
-	std::cout << "n: " << n << std::endl;
-	std::cout << "k: " << k << std::endl;
+int totalCombinations(int n, int k) {
+	int total = 1;
 
     if(k > n) {
         return 0;
     }
-
-	int a = 1;
 
     for(int i=1; i<=k; i++) {
         total *= (n+1-i);
 		total /= i;
     }
 
-	std::cout << "total combs: " << total;
+	std::cout << "total: " << total;
+
 	return total;
+
 }
 
 
@@ -133,7 +131,7 @@ void printCombos(int **allCombos, int total, int d) {
     std::cout << "{ ";
 
     for(int i=0; i<d; i++){	
-        std::cout << allCombos[total][i] << " ";
+	    std::cout << allCombos[total][i] << " ";
     }
 
     std::cout << "} ";
@@ -146,10 +144,9 @@ void hFoldSumsets(int h, int d, int n, int **allCombos, int **allHFold, int tota
 		return;
 	}
 	
-	//for(int i=0; i<hFoldTotal; i++) {
-	//	allHFold[i] = allCombos[total][i] + allCombos[total][i+e]; 
-	 //}
-
+	for(int i=0; i<=hFoldTotal; i++) {
+				
+	}
 
 	//hFoldSumsets(h,d,n,allCombos,allHFold,total--,hFoldTotal);
 
